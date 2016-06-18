@@ -14,11 +14,12 @@ var width = 450;
 var selection = d3.select('.board').append('svg:svg')
   .attr('height', 750).attr('width', 750);
 
-var hero = selection.selectAll('.hero').data(heroData, function (d) { return d.id; });
 
 
 
 var game = function() {
+
+  var hero = selection.selectAll('.hero').data(heroData, function (d) { return d.id; });
 
   var asteroid = selection.selectAll('.shuriken').data(myData, function(d) { return d.id; });
     
@@ -69,13 +70,13 @@ var game = function() {
   asteroid.exit().remove();
 
   hero.enter().append('circle')
-  .attr('cx', function(d) { return d.x; })
-  .attr('cy', function(d) { return d.y; })
-  .attr('r', 25)
-  .fill('purple')
-  .attr('class', 'hero')
-  .attr('width', 50)
-  .attr('height', 50);
+    .attr('cx', function(d) { return d.x; })
+    .attr('cy', function(d) { return d.y; })
+    .attr('r', 25)
+    .attr('class', 'hero')
+    .attr('width', 50)
+    .attr('height', 50);
+  
 
   hero.exit().remove();
 
@@ -98,12 +99,10 @@ setInterval(function() {
     return {x: e.x.animVal.value, y: e.y.animVal.value};
   });
 
-  var heroCoords = d3.select('.hero')[0].map(function(e) {
-    return {x: e.x.animVal.value, y: e.y.animVal.value};
-  });
+  var heroCoords = heroData[0];
 
   var collision = shurikenCoords.some(function(e) {
-    var distance = Math.sqrt(Math.pow((e.x - heroCoords[0].x), 2) + Math.pow((e.y - heroCoords[0].y), 2));
+    var distance = Math.sqrt(Math.pow((e.x - heroCoords.x), 2) + Math.pow((e.y - heroCoords.y), 2));
     return distance <= 50;
   });
 
