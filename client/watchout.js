@@ -14,12 +14,17 @@ var width = 450;
 var selection = d3.select('.board').append('svg:svg')
   .attr('height', 750).attr('width', 750);
 
-
-
-
 var game = function() {
 
   var hero = selection.selectAll('.hero').data(heroData, function (d) { return d.id; });
+  var drag = d3.behavior.drag()
+    .on('drag', function() {
+      heroData[0].x = d3.event.x;
+      heroData[0].y = d3.event.y;
+      hero.attr('cx', d3.event.x)
+          .attr('cy', d3.event.y);
+    });
+  hero.call(drag);
 
   var asteroid = selection.selectAll('.shuriken').data(myData, function(d) { return d.id; });
     
@@ -94,7 +99,7 @@ setInterval(function() {
   game();
 }, 1000);
 
-setInterval(function() {
+setTimeout(function detectCollision() {
   var shurikenCoords = d3.selectAll('.shuriken')[0].map(function(e) {
     return {x: e.x.animVal.value, y: e.y.animVal.value};
   });
@@ -115,5 +120,8 @@ setInterval(function() {
 
 
     d3.select('.collisions').select('span').text((++collisions).toString());
+    setTimeout(detectCollision, 750);
+  } else {
+    setTimeout(detectCollision, 10);
   }
 }, 10);
