@@ -36,7 +36,7 @@ svg.selectAll('circle')
     .data(nodes.slice(1))
   .enter().append('circle')
     .attr('r', function(d) { return d.radius; })
-    .style('fill', function(d, i) { return color(i % 4); });
+    .style('fill', function(d, i) { return color(i % 3); });
 
 force.on('tick', function(e) {
   var q = d3.geom.quadtree(nodes);
@@ -52,7 +52,18 @@ force.on('tick', function(e) {
       .attr('cy', function(d) { return d.y; });
 });
 
+var colorFlag = 0;
+
+var colorChange = function () {
+  svg.selectAll('circle')
+    .data(nodes.slice(1))
+    .attr('r', function(d) { return d.radius; })
+    .style('fill', function(d, i) { return colorFlag === 0 ? color(i % 4) : colorFlag === 1 ? color(i % 5) : color(i % 3); });
+  colorFlag = colorFlag === 0 ? 1 : colorFlag === 1 ? 2 : 0;
+};
+
 setInterval(function moveStuff() {
+  colorChange();
   analyzer.getByteFrequencyData(frequencyData);
   var frequency = frequencyData.reduce(function(total, curr) {
     return total + curr;
@@ -67,14 +78,14 @@ setInterval(function moveStuff() {
   if (frequency > 32000) {
     var bigforce = d3.layout.force()
     .gravity(0.05)
-    .charge(function(d, i) { return i ? 0 : -3000; })
+    .charge(function(d, i) { return i ? 0 : -2500; })
     .nodes(nodes)
     .size([width, height]);
     bigforce.start();
   } else if (frequency > 29000) {
     var bigforce = d3.layout.force()
     .gravity(0.05)
-    .charge(function(d, i) { return i ? 0 : -2000; })
+    .charge(function(d, i) { return i ? 0 : -1750; })
     .nodes(nodes)
     .size([width, height]);
     bigforce.start();
